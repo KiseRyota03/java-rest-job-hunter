@@ -1,10 +1,14 @@
 package vn.edward.jobhunter.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import vn.edward.jobhunter.domain.Company;
+import vn.edward.jobhunter.domain.User;
 import vn.edward.jobhunter.domain.response.ResultPaginationDTO;
 import vn.edward.jobhunter.repository.CompanyRepository;
 import vn.edward.jobhunter.repository.UserRepository;
@@ -38,6 +42,35 @@ public class CompanyService {
     rs.setMeta(mt);
     rs.setResult(pCompany.getContent());
     return rs;
+  }
+
+  public Company handleUpdateCompany(Company c) {
+    Optional<Company> companyOptional = this.companyRepository.findById(c.getId());
+    if (companyOptional.isPresent()) {
+      Company currentCompany = companyOptional.get();
+      currentCompany.setLogo(c.getLogo());
+      currentCompany.setName(c.getName());
+      currentCompany.setDescription(c.getDescription());
+      currentCompany.setAddress(c.getAddress());
+      return this.companyRepository.save(currentCompany);
+    }
+    return null;
+  }
+
+  public void handleDeleteCompany(long id) {
+    Optional<Company> comOptional = this.companyRepository.findById(id);
+    if (comOptional.isPresent()) {
+      Company com = comOptional.get();
+      // fetch all user belong to this company
+      List<User> users = this.userRepository.findByCompany(com);
+      this.userRepository.deleteAll(users);
+    }
+
+    this.companyRepository.deleteById(id);
+  }
+
+  public Optional<Company> findById(long id) {
+    return this.companyRepository.findById(id);
   }
 
 }
