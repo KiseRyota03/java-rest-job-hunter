@@ -7,9 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import vn.edward.jobhunter.domain.Permission;
 // import vn.edward.jobhunter.domain.Permission;
 import vn.edward.jobhunter.domain.Role;
 import vn.edward.jobhunter.domain.response.ResultPaginationDTO;
+import vn.edward.jobhunter.repository.PermissionRepository;
 // import vn.edward.jobhunter.repository.PermissionRepository;
 import vn.edward.jobhunter.repository.RoleRepository;
 
@@ -17,14 +20,13 @@ import vn.edward.jobhunter.repository.RoleRepository;
 public class RoleService {
 
   private final RoleRepository roleRepository;
-  // private final PermissionRepository permissionRepository;
+  private final PermissionRepository permissionRepository;
 
   public RoleService(
-      RoleRepository roleRepository
-  // PermissionRepository permissionRepository
-  ) {
+      RoleRepository roleRepository,
+      PermissionRepository permissionRepository) {
     this.roleRepository = roleRepository;
-    // this.permissionRepository = permissionRepository;
+    this.permissionRepository = permissionRepository;
   }
 
   public boolean existByName(String name) {
@@ -33,15 +35,14 @@ public class RoleService {
 
   public Role create(Role r) {
     // check permissions
-    // if (r.getPermissions() != null) {
-    // List<Long> reqPermissions = r.getPermissions()
-    // .stream().map(x -> x.getId())
-    // .collect(Collectors.toList());
+    if (r.getPermissions() != null) {
+      List<Long> reqPermissions = r.getPermissions()
+          .stream().map(x -> x.getId())
+          .collect(Collectors.toList());
 
-    // List<Permission> dbPermissions =
-    // this.permissionRepository.findByIdIn(reqPermissions);
-    // r.setPermissions(dbPermissions);
-    // }
+      List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
+      r.setPermissions(dbPermissions);
+    }
 
     return this.roleRepository.save(r);
   }
@@ -56,15 +57,14 @@ public class RoleService {
   public Role update(Role r) {
     Role roleDB = this.fetchById(r.getId());
     // check permissions
-    // if (r.getPermissions() != null) {
-    // List<Long> reqPermissions = r.getPermissions()
-    // .stream().map(x -> x.getId())
-    // .collect(Collectors.toList());
+    if (r.getPermissions() != null) {
+      List<Long> reqPermissions = r.getPermissions()
+          .stream().map(x -> x.getId())
+          .collect(Collectors.toList());
 
-    // List<Permission> dbPermissions =
-    // this.permissionRepository.findByIdIn(reqPermissions);
-    // r.setPermissions(dbPermissions);
-    // }
+      List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
+      r.setPermissions(dbPermissions);
+    }
 
     roleDB.setName(r.getName());
     roleDB.setDescription(r.getDescription());
