@@ -9,11 +9,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.edward.jobhunter.domain.Permission;
-// import vn.edward.jobhunter.domain.Permission;
+import vn.edward.jobhunter.domain.Permission;
 import vn.edward.jobhunter.domain.Role;
 import vn.edward.jobhunter.domain.response.ResultPaginationDTO;
 import vn.edward.jobhunter.repository.PermissionRepository;
-// import vn.edward.jobhunter.repository.PermissionRepository;
+import vn.edward.jobhunter.repository.PermissionRepository;
 import vn.edward.jobhunter.repository.RoleRepository;
 
 @Service
@@ -69,7 +69,7 @@ public class RoleService {
     roleDB.setName(r.getName());
     roleDB.setDescription(r.getDescription());
     roleDB.setActive(r.isActive());
-    // roleDB.setPermissions(r.getPermissions());
+    roleDB.setPermissions(r.getPermissions());
     roleDB = this.roleRepository.save(roleDB);
     return roleDB;
   }

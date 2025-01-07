@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.edward.jobhunter.domain.Company;
+import vn.edward.jobhunter.domain.Role;
 import vn.edward.jobhunter.domain.User;
 import vn.edward.jobhunter.domain.response.ResCreateUserDTO;
 import vn.edward.jobhunter.domain.response.ResUpdateUserDTO;
@@ -22,15 +23,14 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final CompanyService companyService;
-  // private final RoleService roleService;
+  private final RoleService roleService;
 
   public UserService(UserRepository userRepository,
-      CompanyService companyService
-  // RoleService roleService
-  ) {
+      CompanyService companyService,
+      RoleService roleService) {
     this.userRepository = userRepository;
     this.companyService = companyService;
-    // this.roleService = roleService;
+    this.roleService = roleService;
   }
 
   public boolean isEmailExist(String email) {
@@ -39,24 +39,23 @@ public class UserService {
 
   public User handleCreateUser(User user) {
     // check company
-    // if (user.getCompany() != null) {
-    // Optional<Company> companyOptional =
-    // this.companyService.findById(user.getCompany().getId());
-    // user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
-    // }
+    if (user.getCompany() != null) {
+      Optional<Company> companyOptional = this.companyService.findById(user.getCompany().getId());
+      user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+    }
 
     // check role
-    // if (user.getRole() != null) {
-    // Role r = this.roleService.fetchById(user.getRole().getId());
-    // user.setRole(r != null ? r : null);
-    // }
+    if (user.getRole() != null) {
+      Role r = this.roleService.fetchById(user.getRole().getId());
+      user.setRole(r != null ? r : null);
+    }
 
     return this.userRepository.save(user);
   }
 
   public ResCreateUserDTO convertToResCreateUserDTO(User user) {
     ResCreateUserDTO res = new ResCreateUserDTO();
-    // ResCreateUserDTO.CompanyUser com = new ResCreateUserDTO.CompanyUser();
+    ResCreateUserDTO.CompanyUser com = new ResCreateUserDTO.CompanyUser();
 
     res.setId(user.getId());
     res.setEmail(user.getEmail());
@@ -66,11 +65,11 @@ public class UserService {
     res.setGender(user.getGender());
     res.setAddress(user.getAddress());
 
-    // if (user.getCompany() != null) {
-    // com.setId(user.getCompany().getId());
-    // com.setName(user.getCompany().getName());
-    // res.setCompany(com);
-    // }
+    if (user.getCompany() != null) {
+      com.setId(user.getCompany().getId());
+      com.setName(user.getCompany().getName());
+      res.setCompany(com);
+    }
     return res;
   }
 
@@ -124,10 +123,10 @@ public class UserService {
       }
 
       // check role
-      // if (reqUser.getRole() != null) {
-      // Role r = this.roleService.fetchById(reqUser.getRole().getId());
-      // currentUser.setRole(r != null ? r : null);
-      // }
+      if (reqUser.getRole() != null) {
+        Role r = this.roleService.fetchById(reqUser.getRole().getId());
+        currentUser.setRole(r != null ? r : null);
+      }
 
       // update
       currentUser = this.userRepository.save(currentUser);
@@ -160,18 +159,18 @@ public class UserService {
   public ResUserDTO convertToResUserDTO(User user) {
     ResUserDTO res = new ResUserDTO();
     ResUserDTO.CompanyUser com = new ResUserDTO.CompanyUser();
-    // ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
+    ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
     if (user.getCompany() != null) {
       com.setId(user.getCompany().getId());
       com.setName(user.getCompany().getName());
       res.setCompany(com);
     }
 
-    // if (user.getRole() != null) {
-    // roleUser.setId(user.getRole().getId());
-    // roleUser.setName(user.getRole().getName());
-    // res.setRole(roleUser);
-    // }
+    if (user.getRole() != null) {
+      roleUser.setId(user.getRole().getId());
+      roleUser.setName(user.getRole().getName());
+      res.setRole(roleUser);
+    }
 
     res.setId(user.getId());
     res.setEmail(user.getEmail());
