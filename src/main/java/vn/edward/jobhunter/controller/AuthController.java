@@ -1,6 +1,7 @@
 package vn.edward.jobhunter.controller;
 
-import org.apache.catalina.security.SecurityUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import vn.edward.jobhunter.domain.User;
 import vn.edward.jobhunter.domain.request.ReqLoginDTO;
 import vn.edward.jobhunter.domain.response.ResLoginDTO;
 import vn.edward.jobhunter.service.UserService;
+import vn.edward.jobhunter.util.SecurityUtil;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -27,7 +29,7 @@ public class AuthController {
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
 
-  @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+  @Value("${jwt.refresh-token-validity-in-seconds}")
   private long refreshTokenExpiration;
 
   public AuthController(
